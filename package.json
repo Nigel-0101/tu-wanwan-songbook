@@ -1,0 +1,8 @@
+{
+  "name": "tu-wanwan-songbook",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node tests/songbook.test.mjs"
+  }
+}

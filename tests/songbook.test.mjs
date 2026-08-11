@@ -40,10 +40,9 @@ assert.match(blueHtml, />♥ 直播间</);
 assert.doesNotMatch(blueHtml, /直播间 016854/);
 assert.match(blueHtml, /09:00–12:00/);
 assert.match(blueHtml, /18:00–22:00/);
-assert.match(blueHtml, /class="frame-layer frame-layer-back"/);
-assert.match(blueHtml, /class="frame-layer frame-layer-front"/);
+assert.doesNotMatch(blueHtml, /frame-layer|layered-frame\.png|layered-ornaments\.png/);
 
-for (const asset of ["avatar-cup.png","avatar-medallion.png","layered-frame.png","layered-ornaments.png"]) {
+for (const asset of ["avatar-cup.png","avatar-medallion.png"]) {
   assert.equal(existsSync(new URL(`../assets/${asset}`, import.meta.url)),true,`${asset} exists`);
   assert.equal(existsSync(new URL(`../dist/client/assets/${asset}`, import.meta.url)),true,`${asset} is mirrored`);
 }
@@ -56,8 +55,11 @@ assert.equal(distBaseCss,baseCss);
 assert.doesNotMatch(themesCss,/repeating-linear-gradient/);
 assert.match(layeredCss,/\.meta\{[^}]*flex-wrap:nowrap/);
 assert.match(layeredCss,/avatar-medallion\.png/);
-assert.match(layeredCss,/\.frame-layer\{[^}]*pointer-events:none/);
+assert.doesNotMatch(layeredCss,/layered-frame\.png|layered-ornaments\.png|\.frame-layer/);
 assert.match(layeredCss,/\.catalog\{[^}]*min-height:auto/);
+assert.match(layeredCss,/\.hero\{[^}]*overflow:hidden[^}]*hero-content-bg\.png/);
+assert.match(layeredCss,/\.catalog\{[^}]*overflow:hidden[^}]*catalog-bg\.png/);
+assert.match(layeredCss,/\.hero-art:before,\.hero-art:after\{display:none/);
 assert.doesNotMatch(baseCss,/cursor-click-(?:core|echo)|cursorCore|cursorEcho|\.chibi-cursor\.pressed/);
 
 for (const [source,dist] of [["data/songs.js","dist/client/data/songs.js"],["js/songbook.js","dist/client/js/songbook.js"],["js/page.js","dist/client/js/page.js"],["blue/index.html","dist/client/blue/index.html"],["css/themes.css","dist/client/css/themes.css"],["css/layered.css","dist/client/css/layered.css"]]) {

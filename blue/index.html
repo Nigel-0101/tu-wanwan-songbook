@@ -44,13 +44,36 @@
       </div>
       <div class="controls">
         <input id="search" type="search" placeholder="搜索歌曲或歌手…" aria-label="搜索歌曲或歌手">
-        <select id="languageFilter" aria-label="语言"><option value="">全部语言</option><option value="中文">中文</option></select>
-        <select id="genreFilter" aria-label="曲风"><option value="">全部曲风</option></select>
-        <select id="typeFilter" aria-label="点歌类型"><option value="">全部类型</option><option value="免费">免费</option></select>
+        <div class="custom-select" data-select="languageFilter">
+          <select id="languageFilter" class="select-native" aria-label="语言"><option value="">全部语言</option><option value="中文">中文</option></select>
+          <button class="custom-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false"><span>全部语言</span><i class="select-chevron" aria-hidden="true"></i></button>
+          <div class="custom-select-menu" role="listbox" aria-label="语言选项"></div>
+        </div>
+        <div class="custom-select" data-select="genreFilter">
+          <select id="genreFilter" class="select-native" aria-label="曲风"><option value="">全部曲风</option></select>
+          <button class="custom-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false"><span>全部曲风</span><i class="select-chevron" aria-hidden="true"></i></button>
+          <div class="custom-select-menu" role="listbox" aria-label="曲风选项"></div>
+        </div>
+        <div class="custom-select" data-select="typeFilter">
+          <select id="typeFilter" class="select-native" aria-label="点歌类型"><option value="">全部类型</option><option value="免费">免费</option></select>
+          <button class="custom-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false"><span>全部类型</span><i class="select-chevron" aria-hidden="true"></i></button>
+          <div class="custom-select-menu" role="listbox" aria-label="点歌类型选项"></div>
+        </div>
         <button id="random" class="random">✦ 兔兔帮我选</button>
       </div>
       <div class="table-shell"><table><thead><tr><th>编号</th><th>歌曲</th><th>歌手</th><th>语言</th><th>曲风</th><th>类型</th><th>操作</th></tr></thead><tbody id="songRows"></tbody></table></div>
-      <div class="pager"><div id="pages" class="pages"></div><span id="pageMeta"></span></div>
+      <div class="pager">
+        <div id="pages" class="pages" role="navigation" aria-label="歌曲分页"></div>
+        <div class="pager-tools">
+          <span id="pageMeta"></span>
+          <form id="jumpForm" class="jump-form">
+            <label for="pageJump">跳至</label>
+            <input id="pageJump" type="number" min="1" step="1" inputmode="numeric" aria-label="跳至第几页">
+            <span>页</span>
+            <button type="submit">确定</button>
+          </form>
+        </div>
+      </div>
     </div>
   </section>
 </main>

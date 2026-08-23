@@ -15,3 +15,56 @@
 @keyframes spin{to{transform:rotate(360deg)}}@keyframes float{50%{transform:translateY(-9px)}}@keyframes sideFloat{50%{translate:0 -12px}}@keyframes pop{50%{transform:scale(1.018)}}@keyframes capsuleReveal{0%,7%{width:58px;transform:translate(-50%,-50%) scale(.86);opacity:1}18%,82%{width:min(520px,calc(100vw - 34px));transform:translate(-50%,-50%) scale(1);opacity:1}100%{width:58px;transform:translate(-50%,-50%) scale(.9);opacity:0}}@keyframes rabbitTravel{0%,7%,100%{left:4px}18%,82%{left:calc(100% - 54px)}}@keyframes textReveal{0%,15%{opacity:0;transform:translateX(28px)}25%,78%{opacity:1;transform:translateX(0)}90%,100%{opacity:0;transform:translateX(18px)}}
 @media(max-width:1500px){.site{padding:20px 18px 48px}.hero{grid-template-columns:290px 1fr}.hero-copy{padding-right:32px}.brand-logo{display:none}.controls{grid-template-columns:1fr 1fr 1fr}.controls input{grid-column:1/-1}.random{grid-column:3}.table-shell{overflow-x:auto}table{min-width:900px}.side-art{display:none!important}}
 @media(max-width:720px){.site{padding:10px}.topline{padding:4px 4px}.hero{grid-template-columns:112px 1fr;min-height:180px;border-radius:26px}.hero-art:before{width:92px;height:92px}.hero-art:after{width:106px;height:106px}.hero-art img{width:130px}.onair{top:10px;left:50%;transform:translateX(-50%);font-size:7px;padding:4px 7px}.hero-copy{padding:20px 14px}.hero h1{font-size:31px}.intro{margin:10px 0;font-size:11px;line-height:1.65}.meta{display:grid;grid-template-columns:1fr 1fr;gap:7px}.meta a,.meta span{min-height:37px;padding:0 8px;justify-content:center;font-size:10px}.catalog{border-radius:26px}.catalog-head{padding:18px 16px}.catalog-title h2{font-size:21px}.controls{padding:14px 12px;grid-template-columns:1fr 1fr}.controls input{grid-column:1/-1}.random{grid-column:auto}.notice{padding-left:16px}.table-shell{margin:0 10px;border:0;background:transparent;overflow:visible}table,tbody{display:block;width:100%;min-width:0}thead{display:none}tbody tr{display:grid;grid-template-columns:1fr 1fr;margin-bottom:10px;padding:12px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.82);box-shadow:0 8px 22px rgba(60,80,100,.07)}tbody td{height:auto;min-height:36px;padding:7px 4px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);white-space:normal;text-align:right}tbody td:before{color:var(--muted);font-size:10px;font-weight:800}tbody td:nth-child(1):before{content:"编号"}tbody td:nth-child(2):before{content:"歌曲"}tbody td:nth-child(3):before{content:"歌手"}tbody td:nth-child(4):before{content:"语言"}tbody td:nth-child(5):before{content:"曲风"}tbody td:nth-child(6):before{content:"类型"}tbody td:nth-child(7){grid-column:1/-1;border:0;padding-top:10px}.copy{width:100%;min-height:42px}.empty{grid-column:1/-1;justify-content:center}.pager{padding:16px 12px 22px;align-items:flex-start;flex-direction:column}.page{width:44px;height:44px}.selection-text{font-size:13px;padding-left:18px}.chibi-cursor{display:none}}
+
+/* Capsule filters and complete pagination */
+.controls{position:relative;z-index:12;overflow:visible}
+.catalog .controls{z-index:30;overflow:visible}
+.custom-select{position:relative;min-width:0}
+.select-native{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important}
+.custom-select-trigger{position:relative;width:100%;height:46px;padding:0 54px 0 18px;border:1px solid var(--line);border-radius:999px;color:var(--ink);background:rgba(255,255,255,.9);font:inherit;text-align:left;cursor:pointer;transition:border-color .18s,box-shadow .18s,background .18s}
+.custom-select-trigger:hover,.custom-select.open .custom-select-trigger{border-color:color-mix(in srgb,var(--accent) 55%,var(--line));background:#fff;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 12%,transparent)}
+.custom-select-trigger:focus-visible,.custom-select-option:focus-visible,.jump-form input:focus-visible,.jump-form button:focus-visible,.page:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 35%,transparent);outline-offset:2px}
+.select-chevron{position:absolute;right:12px;top:50%;display:grid;place-items:center;width:30px;height:30px;transform:translateY(-50%);pointer-events:none}
+.select-chevron:before{content:"";width:8px;height:8px;border-right:2px solid var(--deep);border-bottom:2px solid var(--deep);transform:rotate(45deg) translate(-1px,-1px);transition:transform .18s}
+.custom-select.open .select-chevron:before{transform:rotate(225deg) translate(-1px,-1px)}
+.custom-select-menu{position:absolute;z-index:40;top:calc(100% + 8px);left:0;display:none;width:100%;max-height:260px;padding:7px;border:1px solid color-mix(in srgb,var(--accent) 24%,var(--line));border-radius:20px;background:rgba(255,255,255,.98);box-shadow:0 18px 42px rgba(63,89,119,.18);overflow-y:auto;overscroll-behavior:contain}
+.custom-select.open .custom-select-menu{display:grid;gap:4px;animation:dropdown-in .16s ease-out}
+.custom-select-option{min-height:38px;padding:8px 14px;border:0;border-radius:999px;color:var(--ink);background:transparent;font:inherit;text-align:left;cursor:pointer}
+.custom-select-option:hover,.custom-select-option:focus-visible{color:var(--deep);background:color-mix(in srgb,var(--accent2) 18%,white)}
+.custom-select-option.selected{color:#fff;background:linear-gradient(135deg,var(--accent),var(--deep));font-weight:900}
+@keyframes dropdown-in{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+
+.pager{flex-wrap:wrap}
+.pages{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+.page{flex:0 0 auto}
+.page-arrow{font-size:24px;line-height:1}
+.page:disabled{opacity:.35;cursor:not-allowed}
+.pager-tools{display:flex;align-items:center;justify-content:flex-end;gap:14px;margin-left:auto}
+.jump-form{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;white-space:nowrap}
+.jump-form input{width:66px;height:40px;padding:0 8px;border:1px solid var(--line);border-radius:999px;color:var(--ink);background:rgba(255,255,255,.9);font:inherit;text-align:center;outline:0;-moz-appearance:textfield}
+.jump-form input::-webkit-inner-spin-button,.jump-form input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.jump-form button{height:40px;padding:0 15px;border:1px solid var(--line);border-radius:999px;color:var(--deep);background:#fff;font-weight:900;cursor:pointer;transition:.18s}
+.jump-form button:hover{color:#fff;border-color:var(--accent);background:var(--accent)}
+
+@media(max-width:720px){
+  .controls .custom-select{min-width:0}
+  .custom-select-trigger{height:46px;padding-left:14px;padding-right:46px;font-size:12px}
+  .select-chevron{right:8px}
+  tbody tr{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto auto auto;column-gap:14px}
+  tbody td:nth-child(1){grid-column:1;grid-row:1}
+  tbody td:nth-child(2){grid-column:1;grid-row:2}
+  tbody td:nth-child(3){grid-column:1;grid-row:3;border-bottom:0}
+  tbody td:nth-child(5){grid-column:2;grid-row:1}
+  tbody td:nth-child(4){grid-column:2;grid-row:2}
+  tbody td:nth-child(6){grid-column:2;grid-row:3;border-bottom:0}
+  tbody td:nth-child(7){grid-column:1/-1;grid-row:4;margin-top:6px;border-top:1px solid var(--line)}
+  .pager{gap:13px}
+  .pages{width:100%;padding:2px 1px 5px;overflow-x:auto;scrollbar-width:none}
+  .pages::-webkit-scrollbar{display:none}
+  .page{width:40px;height:40px}
+  .pager-tools{width:100%;margin-left:0;justify-content:space-between;gap:8px}
+  #pageMeta{font-size:11px;white-space:nowrap}
+  .jump-form{gap:5px}
+  .jump-form input{width:54px;height:38px}
+  .jump-form button{height:38px;padding:0 12px}
+}

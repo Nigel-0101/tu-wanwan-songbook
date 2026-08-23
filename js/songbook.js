@@ -26,7 +26,14 @@
     if (pages <= 7) return Array.from({length:pages},(_,index)=>index+1);
     if (page <= 3) return [1,2,3,"…",pages];
     if (page >= pages - 2) return [1,"…",pages-2,pages-1,pages];
-    return [1,"…",page-2,page-1,page,page+1,page+2,"…",pages];
+    return [1,"…",page-1,page,page+1,"…",pages];
+  }
+
+  function resolvePageInput(value, pages, currentPage = 1) {
+    if (String(value).trim() === "") return currentPage;
+    const numeric = Number.parseInt(value,10);
+    if (!Number.isFinite(numeric)) return currentPage;
+    return Math.min(Math.max(1,numeric),Math.max(1,pages));
   }
 
   function randomSong(songs, random = Math.random) {
@@ -37,7 +44,7 @@
     return `点歌 ${song.title}（${song.artist}）`;
   }
 
-  const api = {PAGE_SIZE,filterSongs,pageCount,paginate,pageWindow,randomSong,formatOrder};
+  const api = {PAGE_SIZE,filterSongs,pageCount,paginate,pageWindow,resolvePageInput,randomSong,formatOrder};
   root.Songbook = api;
   if (typeof module !== "undefined") module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);

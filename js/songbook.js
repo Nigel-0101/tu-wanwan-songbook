@@ -24,8 +24,10 @@
 
   function pageWindow(page, pages) {
     if (pages <= 7) return Array.from({length:pages},(_,index)=>index+1);
-    if (page <= 3) return [1,2,3,"…",pages];
-    if (page >= pages - 2) return [1,"…",pages-2,pages-1,pages];
+    if (page <= 3) return Array.from({length:page+1},(_,index)=>index+1);
+    if (page === pages) return [1,"…",pages-1,pages];
+    if (page === pages - 1) return [1,"…",pages-2,pages-1,pages];
+    if (page === pages - 2) return [1,"…",pages-3,pages-2,pages-1,pages];
     return [1,"…",page-1,page,page+1,"…",pages];
   }
 

@@ -68,3 +68,40 @@
   .jump-form input{width:54px;height:38px}
   .jump-form button{height:38px;padding:0 12px}
 }
+
+/* Page-turn motion and the hero logo's quiet, looping "breath". */
+.brand-logo{
+  transform-origin:center;
+  will-change:transform,filter;
+  animation:brand-logo-breathe 5.4s cubic-bezier(.45,.05,.55,.95) infinite;
+}
+tbody.page-enter-forward tr{
+  animation:song-page-enter-forward .36s cubic-bezier(.2,.75,.25,1) both;
+  animation-delay:calc(var(--row-index,0) * 18ms);
+}
+tbody.page-enter-backward tr{
+  animation:song-page-enter-backward .36s cubic-bezier(.2,.75,.25,1) both;
+  animation-delay:calc(var(--row-index,0) * 18ms);
+}
+@keyframes brand-logo-breathe{
+  0%,100%{transform:translateY(-50%) translateY(0) scale(1);filter:drop-shadow(0 8px 16px rgba(67,166,209,.08))}
+  50%{transform:translateY(-50%) translateY(-5px) scale(1.018);filter:drop-shadow(0 14px 24px rgba(236,132,181,.18))}
+}
+@keyframes song-page-enter-forward{
+  from{opacity:0;transform:translateX(22px)}
+  to{opacity:1;transform:translateX(0)}
+}
+@keyframes song-page-enter-backward{
+  from{opacity:0;transform:translateX(-22px)}
+  to{opacity:1;transform:translateX(0)}
+}
+@media(max-width:720px){
+  tbody.page-enter-forward tr,tbody.page-enter-backward tr{
+    animation-duration:.26s;
+    animation-delay:calc(var(--row-index,0) * 10ms);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .brand-logo{animation:none!important}
+  tbody.page-enter-forward tr,tbody.page-enter-backward tr{animation:none!important}
+}

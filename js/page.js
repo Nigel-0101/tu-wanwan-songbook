@@ -1,6 +1,6 @@
 (function () {
   const songs = window.TUWANWAN_SONGS || [];
-  const {filterSongs,paginate,pageWindow,resolvePageInput,randomSong,formatOrder} = window.Songbook;
+  const {filterSongs,paginate,pageWindow,resolvePageInput,pageTransitionDirection,randomSong,formatOrder} = window.Songbook;
   const state = {query:"",language:"",genre:"",type:"",page:1};
   const $ = s => document.querySelector(s);
   const body = $("#songRows"), count = $("#songCount"), pages = $("#pages");
@@ -97,19 +97,57 @@
   function row(song){
     return `<tr><td class="num">${song.id}</td><td class="song-title">${song.title}</td><td>${song.artist}</td><td>${song.language}</td><td>${song.genre}</td><td><span class="pill">${song.type}</span></td><td><button class="copy" data-song-id="${song.id}">复制歌名</button></td></tr>`;
   }
-  function render(){
+  function playPageEntrance(direction){
+    body.classList.remove("page-enter-forward","page-enter-backward");
+    if(direction==="none"||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+    body.querySelectorAll("tr").forEach((item,index)=>item.style.setProperty("--row-index",index));
+    void body.offsetWidth;
+    const className=`page-enter-${direction}`;
+    body.classList.add(className);
+    body.querySelector("tr:last-child")?.addEventListener("animationend",()=>body.classList.remove(className),{once:true});
+  }
+  function render(direction="none"){
     const result=filtered(), paged=paginate(result,state.page); state.page=paged.page;
     count.textContent=result.length;
     body.innerHTML=paged.items.length ? paged.items.map(row).join("") : `<tr><td colspan="7" class="empty">没有找到符合条件的歌曲，换个关键词试试吧。</td></tr>`;
+    playPageEntrance(direction);
     const windowButtons=pageWindow(paged.page,paged.pages).map(value=>value==="…"?'<span class="page-gap" aria-hidden="true">…</span>':`<button class="page ${value===paged.page?'active':''}" data-page="${value}" aria-label="第 ${value} 页" ${value===paged.page?'aria-current="page"':''}>${value}</button>`).join("");
     pages.innerHTML=`<button class="page page-arrow" data-page="${paged.page-1}" aria-label="上一页" ${paged.page===1?'disabled':''}>‹</button>${windowButtons}<button class="page page-arrow" data-page="${paged.page+1}" aria-label="下一页" ${paged.page===paged.pages?'disabled':''}>›</button>`;
     $("#pageMeta").textContent=`找到 ${result.length} 首 · 第 ${paged.page}/${paged.pages} 页`;
     $("#pageJump").value=String(paged.page);
   }
-  $("#search").addEventListener("input",e=>{state.query=e.target.value;state.page=1;render();});
-  [["#languageFilter","language"],["#genreFilter","genre"],["#typeFilter","type"]].forEach(([id,key])=>$(id).addEventListener("change",e=>{state[key]=e.target.value;state.page=1;render();}));
-  pages.addEventListener("click",e=>{const b=e.target.closest("[data-page]");if(!b)return;state.page=Number(b.dataset.page);render();$(".catalog").scrollIntoView({behavior:"smooth",block:"start"});});
-  $("#jumpForm").addEventListener("submit",event=>{event.preventDefault();const total=paginate(filtered(),state.page).pages;state.page=resolvePageInput($("#pageJump").value,total,state.page);render();$(".catalog").scrollIntoView({behavior:"smooth",block:"start"});});
+  let pageMotionToken=0;
+  function resetPageMotion(){
+    pageMotionToken+=1;
+    body.getAnimations().forEach(animation=>animation.cancel());
+    body.classList.remove("page-enter-forward","page-enter-backward");
+  }
+  async function changePage(requestedPage){
+    const total=paginate(filtered(),state.page).pages;
+    const nextPage=resolvePageInput(requestedPage,total,state.page);
+    const direction=pageTransitionDirection(state.page,nextPage);
+    if(direction==="none")return;
+    const token=++pageMotionToken;
+    body.getAnimations().forEach(animation=>animation.cancel());
+    const reducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if(!reducedMotion&&typeof body.animate==="function"){
+      const offset=direction==="forward"?-18:18;
+      const exitMotion=body.animate([
+        {opacity:1,transform:"translateX(0)"},
+        {opacity:0,transform:`translateX(${offset}px)`}
+      ],{duration:125,easing:"ease-in",fill:"forwards"});
+      try{await exitMotion.finished;}catch{}
+      exitMotion.cancel();
+      if(token!==pageMotionToken)return;
+    }
+    state.page=nextPage;
+    render(direction);
+    $(".catalog").scrollIntoView({behavior:reducedMotion?"auto":"smooth",block:"start"});
+  }
+  $("#search").addEventListener("input",e=>{resetPageMotion();state.query=e.target.value;state.page=1;render();});
+  [["#languageFilter","language"],["#genreFilter","genre"],["#typeFilter","type"]].forEach(([id,key])=>$(id).addEventListener("change",e=>{resetPageMotion();state[key]=e.target.value;state.page=1;render();}));
+  pages.addEventListener("click",e=>{const b=e.target.closest("[data-page]");if(!b)return;changePage(Number(b.dataset.page));});
+  $("#jumpForm").addEventListener("submit",event=>{event.preventDefault();const total=paginate(filtered(),state.page).pages;changePage(resolvePageInput($("#pageJump").value,total,state.page));});
   $("#pageJump").addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();$("#jumpForm").requestSubmit();}});
   body.addEventListener("click",async e=>{const b=e.target.closest(".copy");if(!b)return;const song=songs.find(item=>item.id===b.dataset.songId);if(!song)return;const order=formatOrder(song);try{await navigator.clipboard.writeText(order);}catch{}showSelectionCapsule(order);b.textContent="已复制";setTimeout(()=>b.textContent="复制歌名",900);});
   $("#random").addEventListener("click",()=>{const song=randomSong(filtered());if(!song)return;showSelectionCapsule(formatOrder(song));});

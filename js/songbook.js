@@ -38,6 +38,12 @@
     return Math.min(Math.max(1,numeric),Math.max(1,pages));
   }
 
+  function pageTransitionDirection(currentPage, nextPage) {
+    if (nextPage > currentPage) return "forward";
+    if (nextPage < currentPage) return "backward";
+    return "none";
+  }
+
   function randomSong(songs, random = Math.random) {
     return songs.length ? songs[Math.floor(random()*songs.length)] : null;
   }
@@ -46,7 +52,7 @@
     return `点歌 ${song.title}（${song.artist}）`;
   }
 
-  const api = {PAGE_SIZE,filterSongs,pageCount,paginate,pageWindow,resolvePageInput,randomSong,formatOrder};
+  const api = {PAGE_SIZE,filterSongs,pageCount,paginate,pageWindow,resolvePageInput,pageTransitionDirection,randomSong,formatOrder};
   root.Songbook = api;
   if (typeof module !== "undefined") module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);
